@@ -25,7 +25,7 @@ URL:		https://github.com/envoyproxy/envoy
 #Source0:	https://github.com/envoyproxy/%{name}/archive/v%{version}.tar.gz
 Source0:	https://github.com/envoyproxy/envoy/archive/%{git_commit}.zip
 
-Patch0:		741f16d8e.diff
+#Patch0:		741f16d8e.diff
 
 # see https://copr.fedorainfracloud.org/coprs/vbatts/bazel/
 BuildRequires:	bazel
@@ -73,7 +73,7 @@ Requires:	%{name} = %{version}-%{release}
 %prep
 sha1sum %{SOURCE0}
 %setup -q -n %{name}-%{git_commit}
-%patch0 -p1
+#%patch0 -p1
 
 %build
 
