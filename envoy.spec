@@ -1,6 +1,6 @@
 # this is just a monotonically increasing number to preceed the git hash, to get incremented on every git bump
 %global git_bump		0
-%global git_commit		f3b0f8580041649bf300a962674a2cf3f3bd1385
+%global git_commit		5d25f466c3410c0dfa735d7d4358beb76b2da507
 %global git_shortcommit		%(c=%{git_commit}; echo ${c:0:7})
 
 # don't strip binaries at all
@@ -15,7 +15,7 @@
 %define _disable_source_fetch 0
 
 Name:		envoy
-Version:	1.7.1.%{git_bump}.git.%{git_shortcommit}
+Version:	1.8.0.%{git_bump}.git.%{git_shortcommit}
 Release:	1%{?dist}
 Summary:	Envoy is an open source edge and service proxy
 
