@@ -1,0 +1,57 @@
+AMI ID
+CentOS Linux 7 x86_64 HVM EBS ENA 1805_01-b7ee8a69-ee97-4a49-9e68-afaee216db2e-ami-77ec9308.4 (ami-9887c6e7)
+
+sudo yum -y install wget
+
+#Enable EPEL Repository
+sudo yum -y install epel-release
+
+#install The Software Collections ( SCL ) Repository
+sudo yum -y install centos-release-scl
+
+#install devtoolset for compiling with newer versions of c, c++, etc, along with bindutils
+sudo yum -y install devtoolset-4
+scl enable devtoolset-4 bash
+source /opt/rh/devtoolset-4/enable
+
+sudo yum -y install rpm-devel pcre-devel
+
+sudo yum -y install cmake3
+sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
+
+sudo yum -y install ninja-build
+
+mkdir ~/bazelbuild
+wget https://github.com/bazelbuild/bazel/releases/download/0.16.0/bazel-0.16.0-dist.zip -O ~/bazelbuild/bazel-0.16.0-dist.zip
+cd ~/bazelbuild; unzip bazel-0.16.0-dist.zip
+./compile.sh
+
+sudo cp output/bazel /usr/local/bin
+
+sudo yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-devel perl-CPAN
+
+#sudo yum -y install git
+cd /usr/src
+sudo wget https://www.kernel.org/pub/software/scm/git/git-2.9.5.tar.gz
+sudo tar xzf git-2.9.5.tar.gz
+cd git-2.9.5
+sudo make prefix=/usr/local/git all
+sudo make prefix=/usr/local/git install
+
+sudo su
+echo "export PATH=/usr/local/git/bin:$PATH" >> /etc/bashrc
+exit
+source /etc/bashrc
+
+sudo yum -y install go gperftools gperf yaml-cpp nghttp2 luajit c-ares
+
+cd ~/
+mkdir git
+cd git
+git clone https://github.com/rrockenbaugh/copr-build-envoy.git
+cd copr-build-envoy/
+
+#This takes at least 20 mins to complete
+make rpm
+
+ls -la /home/centos/git/copr-build-envoy/x86_64/envoy-1.8.0.0.git.5d25f46-1.el7.x86_64.rpm 
