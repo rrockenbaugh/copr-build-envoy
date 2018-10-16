@@ -65,13 +65,6 @@ cd copr-build-envoy/
 
 sudo mv /usr/bin/as /usr/bin/as.old
 
-vi envoy.spec
-
-99:  bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures --copt "-DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1" -c opt //source/exe:envoy-static ||:
-100: bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures --copt "-DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1"-c opt //source/exe:envoy-static
-
-122:  !REMOVE LINE!
-
 make rpm
 
 ls -la /home/centos/git/copr-build-envoy/x86_64/envoy-1.8.0.0.git.5d25f46-1.el6.x86_64.rpm 
