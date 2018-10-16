@@ -1,0 +1,77 @@
+AMI ID:
+CentOS Linux 6 x86_64 HVM EBS ENA 1805_01-74e73035-3435-48d6-88e0-89cc02ad83ee-ami-86eb94f9.4 (ami-1585c46a)
+
+sudo yum -y install wget
+
+#Enable EPEL Repository
+sudo wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+sudo rpm -ivh epel-release-6-8.noarch.rpm
+
+#install The Software Collections ( SCL ) Repository
+sudo yum -y install centos-release-scl
+
+#install devtoolset for compiling with newer versions of c, c++, etc, along with bindutils
+sudo yum -y install devtoolset-6
+scl enable devtoolset-6 bash
+source /opt/rh/devtoolset-6/enable
+
+#install java
+sudo yum -y install java-1.8.0-openjdk-devel 
+
+sudo yum -y install libtool rpm-devel coreutils rpm-build rpmdevtools pcre-devel
+
+sudo yum -y install cmake3
+sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
+
+wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+unzip ninja-linux.zip
+sudo cp ninja /usr/local/bin
+
+sudo wget http://ftp.tu-chemnitz.de/pub/linux/dag/redhat/el6/en/x86_64/rpmforge/RPMS/realpath-1.17-1.el6.rf.x86_64.rpm
+sudo rpm -ivh realpath-1.17-1.el6.rf.x86_64.rpm
+
+mkdir ~/bazelbuild
+wget https://github.com/bazelbuild/bazel/releases/download/0.16.0/bazel-0.16.0-dist.zip -O ~/bazelbuild/bazel-0.16.0-dist.zip
+cd ~/bazelbuild; unzip bazel-0.16.0-dist.zip
+./compile.sh
+
+sudo cp output/bazel /usr/local/bin
+
+sudo yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-devel perl-CPAN
+sudo yum remove -y perl-Digest-SHA
+wget https://www.rpmfind.net/linux/dag/redhat/el6/en/x86_64/extras/RPMS/perl-Digest-SHA-5.71-1.el6.rfx.x86_64.rpm
+sudo rpm -ivh perl-Digest-SHA-5.71-1.el6.rfx.x86_64.rpm
+
+#sudo yum -y install git
+cd /usr/src
+sudo wget https://www.kernel.org/pub/software/scm/git/git-2.9.5.tar.gz
+sudo tar xzf git-2.9.5.tar.gz
+cd git-2.9.5
+sudo make prefix=/usr/local/git all
+sudo make prefix=/usr/local/git install
+
+sudo su
+echo "export PATH=/usr/local/git/bin:$PATH" >> /etc/bashrc
+exit
+source /etc/bashrc
+
+sudo yum -y install go gperftools gperf yaml-cpp nghttp2 luajit libevent c-ares
+
+cd ~/
+mkdir git
+cd git
+git clone https://github.com/rrockenbaugh/copr-build-envoy.git
+cd copr-build-envoy/
+
+sudo mv /usr/bin/as /usr/bin/as.old
+
+vi envoy.spec
+
+99:  bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures --copt "-DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1" -c opt //source/exe:envoy-static ||:
+100: bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures --copt "-DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1"-c opt //source/exe:envoy-static
+
+122:  !REMOVE LINE!
+
+make rpm
+
+ls -la /home/centos/git/copr-build-envoy/x86_64/envoy-1.8.0.0.git.5d25f46-1.el6.x86_64.rpm 
