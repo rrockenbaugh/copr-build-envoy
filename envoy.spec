@@ -96,8 +96,8 @@ scl enable devtoolset-4 -- bazel --bazelrc=/dev/null build --define exported_sym
 scl enable devtoolset-4 -- bazel shutdown
 
 %else
-bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures -c opt //source/exe:envoy-static ||:
-bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures -c opt //source/exe:envoy-static
+bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures --copt "-DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1" -c opt //source/exe:envoy-static ||:
+bazel --bazelrc=/dev/null build --define exported_symbols=enabled --verbose_failures --copt "-DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1" -c opt //source/exe:envoy-static
 bazel shutdown
 %endif
 
@@ -119,7 +119,6 @@ for file in $(find docs examples -type f) ; do
 done
 
 %files
-%license LICENSE
 %{_bindir}/envoy
 
 %files docs -f docs.file-list
